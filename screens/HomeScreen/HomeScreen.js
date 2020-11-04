@@ -27,6 +27,7 @@ const HomeScreen = () => {
             <ScrollView>
                 <View style={styles.container}>
                     <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+
                     <View style={headerStyles.container}>
                         <View style={headerStyles.header}>
                             <IconButton icon="arrow-left" size={25} color="#222" style={headerStyles.leftButton} />
@@ -41,6 +42,7 @@ const HomeScreen = () => {
                             />
                         </View>
                     </View>
+
                     <View style={loopsStyles.container}>
                         <View style={loopsStyles.loops}>
                             <View style={loopsStyles.header}>
@@ -54,13 +56,14 @@ const HomeScreen = () => {
                             </View>
                         </View>
                     </View>
+
                     <View style={directMessagesStyles.container}>
                         <View style={directMessagesStyles.header}>
-                                <Title style={directMessagesStyles.title}>Direct messages</Title>
-                                <View style={styles.plusButton}>
-                                    <IconButton icon="plus" size={20} color="#222" />
-                                </View>
+                            <Title style={directMessagesStyles.title}>Direct messages</Title>
+                            <View style={styles.plusButton}>
+                                <IconButton icon="plus" size={20} color="#222" />
                             </View>
+                        </View>
                     </View>
                 </View>
             </ScrollView>
