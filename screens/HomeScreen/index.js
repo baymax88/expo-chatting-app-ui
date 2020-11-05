@@ -1,20 +1,22 @@
 import React, {
     useState,
-    useEffect
+    useEffect,
 } from 'react'
 import {
     StyleSheet,
+    SafeAreaView,
     View,
     StatusBar,
     TextInput,
     ScrollView,
     Text,
     TouchableOpacity,
-    Image
+    Image,
+    Animated
 } from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import { AppLoading } from 'expo'
-import Swipeout from 'react-native-swipeout'
+import Swipeable from 'react-native-gesture-handler/Swipeable'
 
 import {
     useFonts,
@@ -39,6 +41,14 @@ const HomeScreen = ({
     const [channels, setChannels] = useState([])
     const [contacts, setContacts] = useState([])
 
+    const removeContact = id => {
+        setContacts(contacts.filter(item => item.id !== id))
+    }
+
+    const removeChannel = id => {
+        setChannels(channels.filter(item => item.id !== id))
+    }
+
     useEffect(() => {
         setChannels([
             {id: '1', title: 'sds_announcements', hasNewMsg: false},
@@ -59,8 +69,8 @@ const HomeScreen = ({
         // return <AppLoading />
     } else {
         return (
-            <ScrollView>
-                <View style={styles.container}>
+            <View style={styles.root}>
+                <ScrollView style={styles.container}>
                     <StatusBar barStyle="dark-content" backgroundColor="#fff" />
 
                     <View style={headerStyles.container}>
@@ -90,7 +100,7 @@ const HomeScreen = ({
                             </View>
 
                             <View style={loopsStyles.content}>
-                                {(channels && channels.length !== 0) ? <Channels channels={channels} /> : (
+                                {(channels && channels.length !== 0) ? <Channels channels={channels} removeChannel={removeChannel} /> : (
                                     <>
                                         <LoopBack style={loopsStyles.loopSvg} />
                                         <Text style={loopsStyles.intro}>
@@ -111,7 +121,7 @@ const HomeScreen = ({
                         </View>
 
                         <View style={directMessagesStyles.content}>
-                            {(contacts && contacts.length !== 0) ? <Contacts contacts={contacts} /> : (
+                            {(contacts && contacts.length !== 0) ? <Contacts contacts={contacts} removeContact={removeContact} /> : (
                                 <>
                                     <Chat style={directMessagesStyles.chatSvg} />
                                     <Text style={directMessagesStyles.intro}>
@@ -121,70 +131,120 @@ const HomeScreen = ({
                             )}
                         </View>
                     </View>
-                </View>
-            </ScrollView>
+                </ScrollView>
+            </View>
         )
     }
 }
 
-const Channels = ({ channels }) => {
+const Channels = ({
+    channels,
+    removeChannel
+}) => {
     return (
         <ScrollView style={loopsStyles.channelList}>
             {channels.map(channel => (
-                <ChannelItem key={channel.id} channel={channel} />
+                <ChannelItem key={channel.id} channel={channel} deleteItem={removeChannel} />
             ))}
         </ScrollView>
     )
 }
 
 const ChannelItem = ({
-    channel
+    channel,
+    deleteItem
 }) => {
+    const rightSwipe = (progress, dragX) => {
+        const scale = dragX.interpolate({
+            inputRange: [0, 0.1],
+            outputRange: [1, 0],
+            extrapolate: 'clamp'
+        })
+        return (
+            <TouchableOpacity style={loopsStyles.deleteBox} onPress={() => deleteItem(channel.id)}>
+                <Animated.Text style={{
+                    transform: [{scale: scale}],
+                    fontFamily: 'Roboto_400Regular',
+                    color: '#fff',
+                    fontSize: 14
+                }}>Delete</Animated.Text>
+            </TouchableOpacity>
+        )
+    }
+
     return (
-        <View style={loopsStyles.channelItem}>
-            <Text style={loopsStyles.channelTitle}># {channel.title}</Text>
-            {channel.hasNewMsg ? <NewMsgAlert /> : null}
-        </View>
+        <Swipeable renderRightActions={rightSwipe}>
+            <View style={loopsStyles.channelItem}>
+                <Text style={loopsStyles.channelTitle}># {channel.title}</Text>
+                {channel.hasNewMsg ? <NewMsgAlert /> : null}
+            </View>
+        </Swipeable>
     )
 }
 
-const Contacts = ({ contacts }) => {
+const Contacts = ({
+    contacts,
+    removeContact
+}) => {
     return (
         <ScrollView style={directMessagesStyles.contactList}>
             {contacts.map(contact => (
-                <ContactItem key={contact.id} contact={contact} />
+                <ContactItem key={contact.id} contact={contact} deleteItem={removeContact}  />
             ))}
         </ScrollView>
     )
 }
 
 const ContactItem = ({
-    contact
+    contact,
+    deleteItem
 }) => {
+    const rightSwipe = (progress, dragX) => {
+        const scale = dragX.interpolate({
+            inputRange: [0, 0.1],
+            outputRange: [1, 0],
+            extrapolate: 'clamp'
+        })
+        return (
+            <TouchableOpacity style={directMessagesStyles.deleteBox} onPress={() => deleteItem(contact.id)}>
+                <Animated.Text style={{
+                    transform: [{scale: scale}],
+                    fontFamily: 'Roboto_400Regular',
+                    color: '#fff',
+                    fontSize: 14
+                }}>Delete</Animated.Text>
+            </TouchableOpacity>
+        )
+    }
+
     return (
-        <View style={directMessagesStyles.contactItem}>
-            <View style={directMessagesStyles.photoNameContainer}>
-                <Image
-                    source={contact.photoUrl}
-                    style={contact.onLine ? directMessagesStyles.avatarOnline : directMessagesStyles.avatar}
-                />
-                <View style={directMessagesStyles.textContainer}>
-                    <Text style={directMessagesStyles.name}>{contact.firstName} {contact.lastName}</Text>
-                    <Text style={directMessagesStyles.lastMsg}>{(contact.lastMsg.length < 28) ? contact.lastMsg : contact.lastMsg.substring(0, 27) + '...'}</Text>
+        <Swipeable renderRightActions={rightSwipe}>
+            <View style={directMessagesStyles.contactItem}>
+                <View style={directMessagesStyles.photoNameContainer}>
+                    <Image
+                        source={contact.photoUrl}
+                        style={contact.onLine ? directMessagesStyles.avatarOnline : directMessagesStyles.avatar}
+                    />
+                    <View style={directMessagesStyles.textContainer}>
+                        <Text style={directMessagesStyles.name}>{contact.firstName} {contact.lastName}</Text>
+                        <Text style={directMessagesStyles.lastMsg}>{(contact.lastMsg.length < 28) ? contact.lastMsg : contact.lastMsg.substring(0, 27) + '...'}</Text>
+                    </View>
+                </View>
+
+                <View style={directMessagesStyles.timeAlertContainer}>
+                    {contact.readMsg ? null : <NewMsgAlert />}
+                    <Text style={directMessagesStyles.lastMsg}>{contact.msgTime}</Text>
                 </View>
             </View>
-
-            <View style={directMessagesStyles.timeAlertContainer}>
-                {contact.readMsg ? null : <NewMsgAlert />}
-                <Text style={directMessagesStyles.lastMsg}>{contact.msgTime}</Text>
-            </View>
-        </View>
+        </Swipeable>
     )
 }
 
 const styles = StyleSheet.create({
+    root: {
+        flex: 1,
+    },
     container: {
-      flex: 1,
       backgroundColor: '#6ac2bd',
     },
     plusButton: {
@@ -279,12 +339,12 @@ const loopsStyles = StyleSheet.create({
         marginBottom: 25
     },
     channelList: {
-        flex: 1,
         height: 135,
-        width: '100%',
+        width: wp('100%'),
     },
     channelItem: {
         flexDirection: 'row',
+        marginHorizontal: 30,
         height: 45,
         alignItems: 'center',
         justifyContent: 'space-between'
@@ -293,7 +353,13 @@ const loopsStyles = StyleSheet.create({
         fontFamily: 'Roboto_400Regular',
         fontSize: 16,
         color: '#fff',
-    }
+    },
+    deleteBox: {
+        backgroundColor: '#ed4956',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 75
+    },
 })
 
 const directMessagesStyles = StyleSheet.create({
@@ -329,13 +395,13 @@ const directMessagesStyles = StyleSheet.create({
         textAlign: 'center'
     },
     contactList: {
-        flex: 1,
         height: 285,
-        width: '100%',
+        width: wp('100%'),
     },
     contactItem: {
         flexDirection: 'row',
         height: 95,
+        marginHorizontal: 30,
         alignItems: 'center',
         justifyContent: 'space-between',
         borderBottomWidth: 1,
@@ -373,7 +439,13 @@ const directMessagesStyles = StyleSheet.create({
         fontFamily: 'Roboto_400Regular',
         fontSize: 14,
         color: '#999'
-    }
+    },
+    deleteBox: {
+        backgroundColor: '#ed4956',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 75
+    },
 })
 
 export default HomeScreen
