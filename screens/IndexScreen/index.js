@@ -13,11 +13,12 @@ const IndexScreen = ({ navigation }) => {
     let [fontsLoaded] = useFonts({Roboto_500Medium})
 
     if (!fontsLoaded) {
-        return <AppLoading />
+        return <View />
+        // return <AppLoading />
     } else {
         return (
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                <Text style={{fontFamily: 'Roboto_500Medium'}} onPress={() => navigation.navigate('Home')}>Messages</Text>
+                <Text style={{fontFamily: 'Roboto_500Medium', fontSize: 20}} onPress={() => navigation.navigate('Home')}>Messages</Text>
             </View>
         )
     }
