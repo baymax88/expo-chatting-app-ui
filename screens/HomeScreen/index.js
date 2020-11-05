@@ -1,15 +1,14 @@
-import React from 'react'
+import React, {
+    useState,
+} from 'react'
 import {
     StyleSheet,
     View,
     StatusBar,
     TextInput,
-    ScrollView
+    ScrollView,
+    Text
 } from 'react-native'
-import {
-    IconButton,
-    Title,
-} from 'react-native-paper'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import { AppLoading } from 'expo'
 import {
@@ -18,6 +17,11 @@ import {
     Roboto_400Regular
 } from '@expo-google-fonts/roboto'
 
+import ArrowBack from '../../assets/images/arrow-back.svg'
+import Plus from '../../assets/images/plus.svg'
+import LoopBack from '../../assets/images/loop-back.svg'
+import Chat from '../../assets/images/chat.svg'
+
 const HomeScreen = ({
     navigation
 }) => {
@@ -25,6 +29,9 @@ const HomeScreen = ({
         Roboto_500Medium,
         Roboto_400Regular
     })
+
+    const [chatRooms, setChatRooms] = useState([])
+    const [contacts, setContacts] = useState([])
 
     if (!fontsLoaded) {
         return <AppLoading />
@@ -36,8 +43,10 @@ const HomeScreen = ({
 
                     <View style={headerStyles.container}>
                         <View style={headerStyles.header}>
-                            <IconButton icon="arrow-left" size={25} color="#222" style={headerStyles.leftButton} onPress={() => navigation.goBack()} />
-                            <Title style={headerStyles.heading}>Messages</Title>
+                            <View style={headerStyles.leftButton}>
+                                <ArrowBack onPress={() => navigation.navigate("Index")} />
+                            </View>
+                            <Text style={headerStyles.heading}>Messages</Text>
                             <View style={{flex: 1}}></View>
                         </View>
                         <View style={headerStyles.searchBoxContainer}>
@@ -52,29 +61,70 @@ const HomeScreen = ({
                     <View style={loopsStyles.container}>
                         <View style={loopsStyles.loops}>
                             <View style={loopsStyles.header}>
-                                <Title style={loopsStyles.title}>Loops</Title>
+                                <Text style={loopsStyles.title}>Loops</Text>
                                 <View style={styles.plusButton}>
-                                    <IconButton icon="plus" size={20} color="#222" />
+                                    <Plus />
                                 </View>
                             </View>
 
                             <View style={loopsStyles.content}>
+                                {(chatRooms && chatRooms.length !== 0) ? <ChatRoomsRender chatRooms={chatRooms} /> : (
+                                    <>
+                                        <LoopBack style={loopsStyles.loopSvg} />
+                                        <Text style={loopsStyles.intro}>
+                                            Life is an infinite loop of teaching and learning. Create a loop and invite others to discuss any topic using #hashtags.
+                                        </Text>
+                                    </>
+                                )}
                             </View>
                         </View>
                     </View>
 
                     <View style={directMessagesStyles.container}>
                         <View style={directMessagesStyles.header}>
-                            <Title style={directMessagesStyles.title}>Direct messages</Title>
+                            <Text style={directMessagesStyles.title}>Direct messages</Text>
                             <View style={styles.plusButton}>
-                                <IconButton icon="plus" size={20} color="#222" />
+                                <Plus />
                             </View>
+                        </View>
+
+                        <View style={directMessagesStyles.content}>
+                            {(contacts && contacts.length !== 0) ? <Contacts contacts={contacts} /> : (
+                                <>
+                                    <Chat style={directMessagesStyles.chatSvg} />
+                                    <Text style={directMessagesStyles.intro}>
+                                        Connect and engage directly with members anywhere in the world about the things you care about the most.
+                                    </Text>
+                                </>
+                            )}
                         </View>
                     </View>
                 </View>
             </ScrollView>
         )
     }
+}
+
+const ChatRoomsRender = ({ chatRooms }) => {
+    return (
+        <ScrollView>
+            {chatRooms.map(room => {
+                <>
+                </>
+            })}
+        </ScrollView>
+    )
+}
+
+const Contacts = ({ contacts }) => {
+    return (
+        <ScrollView>
+            {contacts.map(contact => {
+                <>
+                </>
+            })}
+        </ScrollView>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -99,7 +149,8 @@ const styles = StyleSheet.create({
 
 const headerStyles = StyleSheet.create({
     container: {
-        paddingVertical: 25,
+        paddingTop: 40,
+        paddingBottom: 25,
         paddingHorizontal: 30,
         backgroundColor: '#fff',
         borderBottomRightRadius: 40,
@@ -123,7 +174,7 @@ const headerStyles = StyleSheet.create({
         textAlign: 'center'
     },
     searchBoxContainer: {
-        marginTop: 10,
+        marginTop: 30,
     },
     searchBox: {
         height: 50,
@@ -161,7 +212,18 @@ const loopsStyles = StyleSheet.create({
         color: '#fff',
     },
     content: {
+        justifyContent: 'center',
+        alignItems: "center"
+    },
+    loopSvg: {
         marginTop: 30,
+        marginBottom: 20
+    },
+    intro: {
+        fontFamily: 'Roboto_500Medium',
+        fontSize: 16,
+        color: '#fff',
+        textAlign: 'center'
     }
 })
 
@@ -183,6 +245,20 @@ const directMessagesStyles = StyleSheet.create({
         fontSize: 16,
         color: '#222',
     },
+    content: {
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    chatSvg: {
+        marginTop: 30,
+        marginBottom: 20
+    },
+    intro: {
+        fontFamily: 'Roboto_500Medium',
+        fontSize: 16,
+        color: '#222',
+        textAlign: 'center'
+    }
 })
 
 export default HomeScreen
