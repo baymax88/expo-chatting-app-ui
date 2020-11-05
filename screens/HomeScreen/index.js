@@ -14,11 +14,17 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { AppLoading } from 'expo'
 import {
     useFonts,
-    Roboto_500Medium
+    Roboto_500Medium,
+    Roboto_400Regular
 } from '@expo-google-fonts/roboto'
 
-const HomeScreen = () => {
-    let [fontsLoaded] = useFonts({Roboto_500Medium})
+const HomeScreen = ({
+    navigation
+}) => {
+    let [fontsLoaded] = useFonts({
+        Roboto_500Medium,
+        Roboto_400Regular
+    })
 
     if (!fontsLoaded) {
         return <AppLoading />
@@ -30,7 +36,7 @@ const HomeScreen = () => {
 
                     <View style={headerStyles.container}>
                         <View style={headerStyles.header}>
-                            <IconButton icon="arrow-left" size={25} color="#222" style={headerStyles.leftButton} />
+                            <IconButton icon="arrow-left" size={25} color="#222" style={headerStyles.leftButton} onPress={() => navigation.goBack()} />
                             <Title style={headerStyles.heading}>Messages</Title>
                             <View style={{flex: 1}}></View>
                         </View>
@@ -79,24 +85,24 @@ const styles = StyleSheet.create({
     plusButton: {
         backgroundColor: '#fff',
         borderRadius: 15,
-        width: 50,
-        height: 50,
+        width: 45,
+        height: 45,
         alignItems: 'center',
         justifyContent: 'center',
-        elevation: 5,
+        elevation: 4,
         shadowColor: '#000',
         shadowOffset: {width: 0, height: 0},
-        shadowOpacity: 0.3,
-        shadowRadius: wp('1%')
+        shadowOpacity: 0.1,
+        shadowRadius: 20
     }
 });
 
 const headerStyles = StyleSheet.create({
     container: {
-        height: 220,
-        justifyContent: 'center',
+        paddingVertical: 25,
+        paddingHorizontal: 30,
         backgroundColor: '#fff',
-        borderBottomRightRadius: 35,
+        borderBottomRightRadius: 40,
     },
     header: {
         marginTop: 10,
@@ -105,7 +111,8 @@ const headerStyles = StyleSheet.create({
     },
     leftButton: {
         flex: 1,
-        alignSelf: 'flex-start'
+        alignSelf: 'flex-start',
+        alignItems: 'flex-start'
     },
     heading: {
         flex: 4,
@@ -117,28 +124,31 @@ const headerStyles = StyleSheet.create({
     },
     searchBoxContainer: {
         marginTop: 10,
-        paddingHorizontal: wp('6%')
     },
     searchBox: {
+        height: 50,
         backgroundColor: '#f5f5f5',
-        fontSize: 16,
-        paddingHorizontal: wp('8%'),
-        paddingVertical: wp('4%'),
+        fontSize: 14,
+        fontFamily: 'Roboto_400Regular',
+        paddingHorizontal: 25,
+        alignItems: 'center',
         borderRadius: 15
     }
 })
 
 const loopsStyles = StyleSheet.create({
     container: {
-        height: 250,
+        height: 265,
         backgroundColor: '#fff'
     },
     loops: {
         width: '100%',
         height: '100%',
         backgroundColor: '#6ac2bd',
-        borderTopLeftRadius: 35,
-        padding: wp('8%')
+        borderTopLeftRadius: 40,
+        paddingHorizontal: 30,
+        paddingTop: 30,
+        paddingBottom: 25
     },
     header: {
         flexDirection: 'row',
@@ -158,10 +168,10 @@ const loopsStyles = StyleSheet.create({
 const directMessagesStyles = StyleSheet.create({
     container: {
         height: 380,
-        backgroundColor: '#fff',
-        borderTopLeftRadius: 35,
-        borderTopRightRadius: 35,
-        padding: wp('8%')
+        backgroundColor: '#fdfdfd',
+        borderTopLeftRadius: 40,
+        borderTopRightRadius: 40,
+        padding: 30,
     },
     header: {
         flexDirection: 'row',
