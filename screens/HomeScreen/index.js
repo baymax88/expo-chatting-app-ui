@@ -4,7 +4,7 @@ import React, {
 } from 'react'
 import {
     StyleSheet,
-    SafeAreaView,
+    KeyboardAvoidingView,
     View,
     StatusBar,
     TextInput,
@@ -69,8 +69,8 @@ const HomeScreen = ({
         // return <AppLoading />
     } else {
         return (
-            <View style={styles.root}>
-                <ScrollView style={styles.container}>
+            <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"}>
+                <ScrollView style={styles.root}>
                     <StatusBar barStyle="dark-content" backgroundColor="#fff" />
 
                     <View style={headerStyles.container}>
@@ -115,7 +115,7 @@ const HomeScreen = ({
                     <View style={directMessagesStyles.container}>
                         <View style={directMessagesStyles.header}>
                             <Text style={directMessagesStyles.title}>Direct messages</Text>
-                            <TouchableOpacity style={styles.plusButton}>
+                            <TouchableOpacity style={styles.plusButton} onPress={() => navigation.navigate('NewMessage')}>
                                 <Plus />
                             </TouchableOpacity>
                         </View>
@@ -132,7 +132,7 @@ const HomeScreen = ({
                         </View>
                     </View>
                 </ScrollView>
-            </View>
+            </KeyboardAvoidingView>
         )
     }
 }
@@ -142,11 +142,11 @@ const Channels = ({
     removeChannel
 }) => {
     return (
-        <ScrollView style={loopsStyles.channelList}>
+        <View style={loopsStyles.channelList}>
             {channels.map(channel => (
                 <ChannelItem key={channel.id} channel={channel} deleteItem={removeChannel} />
             ))}
-        </ScrollView>
+        </View>
     )
 }
 
@@ -187,11 +187,11 @@ const Contacts = ({
     removeContact
 }) => {
     return (
-        <ScrollView style={directMessagesStyles.contactList}>
+        <View style={directMessagesStyles.contactList}>
             {contacts.map(contact => (
                 <ContactItem key={contact.id} contact={contact} deleteItem={removeContact}  />
             ))}
-        </ScrollView>
+        </View>
     )
 }
 
@@ -242,10 +242,8 @@ const ContactItem = ({
 
 const styles = StyleSheet.create({
     root: {
-        flex: 1,
-    },
-    container: {
-      backgroundColor: '#6ac2bd',
+        // flex: 1,
+        backgroundColor: '#6ac2bd',
     },
     plusButton: {
         backgroundColor: '#fff',
@@ -339,7 +337,6 @@ const loopsStyles = StyleSheet.create({
         marginBottom: 25
     },
     channelList: {
-        height: 135,
         width: wp('100%'),
     },
     channelItem: {
@@ -395,7 +392,6 @@ const directMessagesStyles = StyleSheet.create({
         textAlign: 'center'
     },
     contactList: {
-        height: 285,
         width: wp('100%'),
     },
     contactItem: {
