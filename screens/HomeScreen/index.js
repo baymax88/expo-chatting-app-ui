@@ -30,6 +30,19 @@ import LoopBack from '../../assets/images/loop-back.svg'
 import Chat from '../../assets/images/chat.svg'
 import NewMsgAlert from '../../assets/images/red-dot.svg'
 
+const testingDataLoops = [
+    {id: '1', title: 'sds_announcements', hasNewMsg: false},
+    {id: '2', title: 'sds_events', hasNewMsg: true},
+    {id: '3', title: 'sds_thepowerofwe', hasNewMsg: false},
+    {id: '4', title: 'sds_thepowerofwe2', hasNewMsg: false},
+]
+const testingDataDM = [
+    {id: '1', firstName: 'Susan', lastName: 'Mitchell', lastMsg: 'Yes, I think so.', msgTime: 'Fri', onLine: true, readMsg: true, photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg')},
+    {id: '2', firstName: 'Susan', lastName: 'Mitchell', lastMsg: 'This is great. What I would love to do that.', msgTime: '11:19', onLine: false, readMsg: false, photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg')},
+    {id: '3', firstName: 'Susan', lastName: 'Mitchell', lastMsg: 'Yes, I think so.', msgTime: 'Wed', onLine: false, readMsg: false, photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg')},
+    {id: '4', firstName: 'Susan', lastName: 'Mitchell', lastMsg: 'Yes, I think so.', msgTime: '11:19', onLine: false, readMsg: true, photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg')},
+]
+
 const HomeScreen = ({
     navigation
 }) => {
@@ -50,18 +63,8 @@ const HomeScreen = ({
     }
 
     useEffect(() => {
-        setChannels([
-            {id: '1', title: 'sds_announcements', hasNewMsg: false},
-            {id: '2', title: 'sds_events', hasNewMsg: true},
-            {id: '3', title: 'sds_thepowerofwe', hasNewMsg: false},
-            {id: '4', title: 'sds_thepowerofwe2', hasNewMsg: false},
-        ]),
-        setContacts([
-            {id: '1', firstName: 'Susan', lastName: 'Mitchell', lastMsg: 'Yes, I think so.', msgTime: 'Fri', onLine: true, readMsg: true, photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg')},
-            {id: '2', firstName: 'Susan', lastName: 'Mitchell', lastMsg: 'This is great. What I would love to do that.', msgTime: '11:19', onLine: false, readMsg: false, photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg')},
-            {id: '3', firstName: 'Susan', lastName: 'Mitchell', lastMsg: 'Yes, I think so.', msgTime: 'Wed', onLine: false, readMsg: false, photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg')},
-            {id: '4', firstName: 'Susan', lastName: 'Mitchell', lastMsg: 'Yes, I think so.', msgTime: '11:19', onLine: false, readMsg: true, photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg')},
-        ])
+        setChannels(testingDataLoops),
+        setContacts(testingDataDM)
     }, [])
 
     if (!fontsLoaded) {
@@ -94,7 +97,7 @@ const HomeScreen = ({
                         <View style={loopsStyles.loops}>
                             <View style={loopsStyles.header}>
                                 <Text style={loopsStyles.title}>Loops</Text>
-                                <TouchableOpacity style={styles.plusButton}>
+                                <TouchableOpacity style={styles.plusButton} onPress={() => navigation.navigate('NewLoop')}>
                                     <Plus />
                                 </TouchableOpacity>
                             </View>
@@ -290,7 +293,7 @@ const headerStyles = StyleSheet.create({
         marginTop: 30,
     },
     searchBox: {
-        height: 50,
+        height: 60,
         backgroundColor: '#f5f5f5',
         fontSize: 14,
         fontFamily: 'Roboto_400Regular',
@@ -431,7 +434,7 @@ const directMessagesStyles = StyleSheet.create({
         color: '#222',
     },
     lastMsg: {
-        marginTop: 10,
+        marginTop: 4,
         fontFamily: 'Roboto_400Regular',
         fontSize: 14,
         color: '#999'

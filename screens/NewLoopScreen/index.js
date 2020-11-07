@@ -34,7 +34,7 @@ const testingData = [
     {id: '7', firstName: 'Susan', lastName: 'Mitchell', position: 'Founder and CEO', photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg'), onLine: true},
 ]
 
-const NewMessageScreen = ({
+const NewLoopScreen = ({
     navigation
 }) => {
     let [fontsLoaded] = useFonts({
@@ -44,6 +44,7 @@ const NewMessageScreen = ({
 
     const [contactList, setContactList] = useState([])
     const [selectedIds, setSelectedIds] = useState([])
+    const [name, setName] = useState('')
 
     const selectContact = id => {
         if (!selectedIds.includes(id)) {
@@ -78,10 +79,24 @@ const NewMessageScreen = ({
                         <TouchableOpacity style={headerStyles.leftButton} onPress={() => navigation.navigate('Home')}>
                             <Text style={headerStyles.letfButtonText}>Cancel</Text>
                         </TouchableOpacity>
-                        <Text style={headerStyles.heading}>New messages</Text>
+                        <Text style={headerStyles.heading}>New loop</Text>
                         <TouchableOpacity style={headerStyles.rightButton}onPress={() => navigation.navigate('DMChat')}>
-                            <Text style={headerStyles.rightButtonText}>Send</Text>
+                            <Text style={headerStyles.rightButtonText}>Share</Text>
                         </TouchableOpacity>
+                    </View>
+                    <View style={headerStyles.searchBoxContainer}>
+                        <Text style={headerStyles.searchHeading}>Make Public</Text>
+                    </View>
+                    <View style={headerStyles.searchBoxContainer}>
+                        <Text style={headerStyles.searchHeading}>Name (lowercase, no spaces or periods)</Text>
+                        <TextInput
+                            placeholder="Name this loop"
+                            placeholderTextColor="#979797"
+                            style={headerStyles.searchBox}
+                            autoCapitalize="none"
+                            value={name}
+                            onChangeText={text => setName(text.toLowerCase())}
+                        />
                     </View>
                     <View style={headerStyles.searchBoxContainer}>
                         <Text style={headerStyles.searchHeading}>Send to members</Text>
@@ -95,7 +110,6 @@ const NewMessageScreen = ({
                 </View>
 
                 <View style={contactListStyles.container}>
-                    <Text style={contactListStyles.heading}>Recent conversations</Text>
                     <View style={contactListStyles.listContainer}>
                         <ContactList contacts={contactList} selectContact={selectContact} selectedIds={selectedIds} />
                     </View>
@@ -159,6 +173,7 @@ const headerStyles = StyleSheet.create({
     },
     header: {
         marginTop: 10,
+        marginBottom: 40,
         alignItems: 'center',
         justifyContent: 'space-between',
         flexDirection: 'row',
@@ -200,7 +215,7 @@ const headerStyles = StyleSheet.create({
         color: '#222',
     },
     searchBoxContainer: {
-        marginTop: 40,
+        marginBottom: 20,
     },
     searchHeading: {
         fontFamily: 'Roboto_500Medium',
@@ -248,7 +263,7 @@ const contactListStyles = StyleSheet.create({
     },
     photoNameContainer: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     checkBoxContainer: {
         alignItems: 'center'
@@ -281,4 +296,4 @@ const contactListStyles = StyleSheet.create({
     },
 })
 
-export default NewMessageScreen
+export default NewLoopScreen
