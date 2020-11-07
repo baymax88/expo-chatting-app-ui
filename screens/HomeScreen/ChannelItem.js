@@ -1,66 +1,90 @@
 import React from 'react'
 import {
-    TouchableOpacity,
-    Animated,
     View,
-    Text,
-    StyleSheet
+    StyleSheet,
 } from 'react-native'
-import Swipeable from 'react-native-gesture-handler/Swipeable'
+import Animated, {
+    abs,
+    add,
+    cond,
+    eq,
+    set,
+    useCode,
+} from 'react-native-reanimated'
+import {
+    PanGestureHandler,
+    State,
+    TouchableWithoutFeedback
+} from 'react-native-gesture-handler'
+import {
+    snapPoint,
+    timing,
+    useClock,
+    usePanGestureHandler,
+    useValue,
+    minus,
+    clamp,
+} from 'react-native-redash/lib/module/v1'
 
-import NewMsgAlert from '../../assets/images/red-dot.svg'
+import ChannelItemLayout from './ChannelItemLayout';
+import Action from './Action';
+
+const snapPoints = [-75, 0];
 
 const ChannelItem = ({
     channel,
     deleteItem
 }) => {
-    const rightSwipe = (progress, dragX) => {
-        const scale = dragX.interpolate({
-            inputRange: [0, 0.1],
-            outputRange: [1, 0],
-            extrapolate: 'clamp'
-        })
-        return (
-            <TouchableOpacity style={styles.deleteBox} onPress={() => deleteItem(channel.id)}>
-                <Animated.Text style={{
-                    transform: [{scale: scale}],
-                    fontFamily: 'Roboto_400Regular',
-                    color: '#fff',
-                    fontSize: 14
-                }}>Delete</Animated.Text>
-            </TouchableOpacity>
-        )
-    }
+    const {
+        gestureHandler,
+        translation,
+        velocity,
+        state
+    } = usePanGestureHandler()
+
+    const translateX = useValue(0);
+    const offsetX = useValue(0);
+    const height = useValue(45);
+    const deleteOpacity = useValue(1);
+    const clock = useClock();
+    const to = snapPoint(translateX, velocity.x, snapPoints);
+    useCode(
+        () => [
+            cond(eq(state, State.ACTIVE),
+                set(translateX, add(offsetX, clamp(translation.x, -9999, minus(offsetX))))
+            ),
+            cond(eq(state, State.END), [
+                set(translateX, timing({ clock, from: translateX, to })),
+                set(offsetX, translateX),
+            ]),
+        ],
+        []
+    );
 
     return (
-        <Swipeable renderRightActions={rightSwipe}>
-            <View style={styles.item}>
-                <Text style={styles.title}># {channel.title}</Text>
-                {channel.hasNewMsg ? <NewMsgAlert /> : null}
+        <Animated.View>
+            <View style={styles.background}>
+                <TouchableWithoutFeedback onPress={() => deleteItem(channel.id)}>
+                    <Action x={abs(translateX)} height={45} {...{ deleteOpacity }} />
+                </TouchableWithoutFeedback>
             </View>
-        </Swipeable>
+            <PanGestureHandler failOffsetY={[-5, 5]} activeOffsetX={[-5, 5]} {...gestureHandler}>
+                <Animated.View style={{ height, transform: [{ translateX }] }}>
+                    <ChannelItemLayout {...{ channel }} />
+                </Animated.View>
+            </PanGestureHandler>
+        </Animated.View>
     )
 }
 
 const styles = StyleSheet.create({
-    item: {
+    background: {
+        ...StyleSheet.absoluteFillObject,
         flexDirection: 'row',
-        marginHorizontal: 30,
-        height: 45,
+        justifyContent: 'flex-end',
         alignItems: 'center',
-        justifyContent: 'space-between'
-    },
-    title: {
-        fontFamily: 'Roboto_400Regular',
-        fontSize: 16,
-        color: '#fff',
-    },
-    deleteBox: {
-        backgroundColor: '#ed4956',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 75
-    },
+        overflow: 'hidden'
+    }
 })
 
 export default ChannelItem

@@ -1,110 +1,90 @@
 import React from 'react'
 import {
-    StyleSheet,
-    TouchableOpacity,
-    Animated,
-    Text,
     View,
-    Image
+    StyleSheet,
 } from 'react-native'
-import Swipeable from 'react-native-gesture-handler/Swipeable'
+import Animated, {
+    abs,
+    add,
+    cond,
+    eq,
+    set,
+    useCode,
+} from 'react-native-reanimated'
+import {
+    PanGestureHandler,
+    State,
+    TouchableWithoutFeedback
+} from 'react-native-gesture-handler'
+import {
+    snapPoint,
+    timing,
+    useClock,
+    usePanGestureHandler,
+    useValue,
+    minus,
+    clamp,
+} from 'react-native-redash/lib/module/v1'
 
-import NewMsgAlert from '../../assets/images/red-dot.svg'
+import ContactItemLayout from './ContactItemLayout';
+import Action from './Action';
+
+const snapPoints = [-75, 0];
 
 const ContactItem = ({
     contact,
     deleteItem
 }) => {
-    const rightSwipe = (progress, dragX) => {
-        const scale = dragX.interpolate({
-            inputRange: [0, 0.1],
-            outputRange: [1, 0],
-            extrapolate: 'clamp'
-        })
-        return (
-            <TouchableOpacity style={styles.deleteBox} onPress={() => deleteItem(contact.id)}>
-                <Animated.Text style={{
-                    transform: [{scale: scale}],
-                    fontFamily: 'Roboto_400Regular',
-                    color: '#fff',
-                    fontSize: 14
-                }}>Delete</Animated.Text>
-            </TouchableOpacity>
-        )
-    }
+    const {
+        gestureHandler,
+        translation,
+        velocity,
+        state
+    } = usePanGestureHandler()
+
+    const translateX = useValue(0);
+    const offsetX = useValue(0);
+    const height = useValue(95);
+    const deleteOpacity = useValue(1);
+    const clock = useClock();
+    const to = snapPoint(translateX, velocity.x, snapPoints);
+    useCode(
+        () => [
+            cond(eq(state, State.ACTIVE),
+                set(translateX, add(offsetX, clamp(translation.x, -9999, minus(offsetX))))
+            ),
+            cond(eq(state, State.END), [
+                set(translateX, timing({ clock, from: translateX, to })),
+                set(offsetX, translateX),
+            ]),
+        ],
+        []
+    );
 
     return (
-        <Swipeable renderRightActions={rightSwipe}>
-            <View style={styles.item}>
-                <View style={styles.photoNameContainer}>
-                    <Image
-                        source={contact.photoUrl}
-                        style={contact.onLine ? styles.avatarOnline : styles.avatar}
-                    />
-                    <View style={styles.textContainer}>
-                        <Text style={styles.name}>{contact.firstName} {contact.lastName}</Text>
-                        <Text style={styles.lastMsg}>{(contact.lastMsg.length < 28) ? contact.lastMsg : contact.lastMsg.substring(0, 27) + '...'}</Text>
-                    </View>
-                </View>
-
-                <View style={styles.timeAlertContainer}>
-                    {contact.readMsg ? null : <NewMsgAlert />}
-                    <Text style={styles.lastMsg}>{contact.msgTime}</Text>
-                </View>
+        <Animated.View>
+            <View style={styles.background}>
+                <TouchableWithoutFeedback onPress={() => deleteItem(contact.id)}>
+                    <Action x={abs(translateX)} height={95} {...{ deleteOpacity }} />
+                </TouchableWithoutFeedback>
             </View>
-        </Swipeable>
+            <PanGestureHandler failOffsetY={[-5, 5]} activeOffsetX={[-5, 5]} {...gestureHandler}>
+                <Animated.View style={{ height, transform: [{ translateX }] }}>
+                    <ContactItemLayout {...{ contact }} />
+                </Animated.View>
+            </PanGestureHandler>
+        </Animated.View>
     )
 }
 
 const styles = StyleSheet.create({
-    item: {
+    background: {
+        ...StyleSheet.absoluteFillObject,
         flexDirection: 'row',
-        height: 95,
-        marginHorizontal: 30,
+        justifyContent: 'flex-end',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        borderBottomWidth: 1,
-        borderBottomColor: '#f5f5f5'
-    },
-    photoNameContainer: {
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    timeAlertContainer: {
-        alignItems: 'flex-end'
-    },
-    avatar: {
-        width: 55,
-        height: 55,
-        borderRadius: 55,
-    },
-    avatarOnline: {
-        width: 55,
-        height: 55,
-        borderRadius: 55,
-        borderColor: '#43cb6f',
-        borderWidth: 2
-    },
-    textContainer: {
-        marginLeft: 10
-    },
-    name: {
-        fontFamily: 'Roboto_400Regular',
-        fontSize: 16,
-        color: '#222',
-    },
-    lastMsg: {
-        marginTop: 4,
-        fontFamily: 'Roboto_400Regular',
-        fontSize: 14,
-        color: '#999'
-    },
-    deleteBox: {
-        backgroundColor: '#ed4956',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 75
-    },
+        overflow: 'hidden'
+    }
 })
 
 export default ContactItem

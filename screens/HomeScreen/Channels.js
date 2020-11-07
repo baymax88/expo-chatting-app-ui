@@ -14,10 +14,6 @@ const Channels = ({
 }) => {
     return (
         <View style={styles.container}>
-            {/* <FlatList
-                data={channels}
-                renderItem={({ item }) => <ChannelItem {...{item}} />}
-            /> */}
             {channels.map(channel => (
                 <ChannelItem
                     key={channel.id}
