@@ -11,12 +11,11 @@ import {
     ScrollView,
     Text,
     TouchableOpacity,
-    Image,
-    Animated
 } from 'react-native'
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import { AppLoading } from 'expo'
-import Swipeable from 'react-native-gesture-handler/Swipeable'
+
+import Channels from './Channels'
+import Contacts from './Contacts'
 
 import {
     useFonts,
@@ -28,7 +27,6 @@ import ArrowBack from '../../assets/images/arrow-back.svg'
 import Plus from '../../assets/images/plus.svg'
 import LoopBack from '../../assets/images/loop-back.svg'
 import Chat from '../../assets/images/chat.svg'
-import NewMsgAlert from '../../assets/images/red-dot.svg'
 
 const testingDataLoops = [
     {id: '1', title: 'sds_announcements', hasNewMsg: false},
@@ -78,7 +76,10 @@ const HomeScreen = ({
 
                     <View style={headerStyles.container}>
                         <View style={headerStyles.header}>
-                            <TouchableOpacity style={headerStyles.leftButton} onPress={() => navigation.navigate("Index")}>
+                            <TouchableOpacity
+                                style={headerStyles.leftButton}
+                                onPress={() => navigation.navigate("Index")}
+                            >
                                 <ArrowBack />
                             </TouchableOpacity>
                             <Text style={headerStyles.heading}>Messages</Text>
@@ -97,13 +98,21 @@ const HomeScreen = ({
                         <View style={loopsStyles.loops}>
                             <View style={loopsStyles.header}>
                                 <Text style={loopsStyles.title}>Loops</Text>
-                                <TouchableOpacity style={styles.plusButton} onPress={() => navigation.navigate('NewLoop')}>
+                                <TouchableOpacity
+                                    style={styles.plusButton}
+                                    onPress={() => navigation.navigate('NewLoop')}
+                                >
                                     <Plus />
                                 </TouchableOpacity>
                             </View>
 
                             <View style={loopsStyles.content}>
-                                {(channels && channels.length !== 0) ? <Channels channels={channels} removeChannel={removeChannel} /> : (
+                                {(channels && channels.length !== 0) ? (
+                                    <Channels
+                                        channels={channels}
+                                        removeChannel={removeChannel}
+                                    />
+                                ) : (
                                     <>
                                         <LoopBack style={loopsStyles.loopSvg} />
                                         <Text style={loopsStyles.intro}>
@@ -118,13 +127,21 @@ const HomeScreen = ({
                     <View style={directMessagesStyles.container}>
                         <View style={directMessagesStyles.header}>
                             <Text style={directMessagesStyles.title}>Direct messages</Text>
-                            <TouchableOpacity style={styles.plusButton} onPress={() => navigation.navigate('NewMessage')}>
+                            <TouchableOpacity
+                                style={styles.plusButton}
+                                onPress={() => navigation.navigate('NewMessage')}
+                            >
                                 <Plus />
                             </TouchableOpacity>
                         </View>
 
                         <View style={directMessagesStyles.content}>
-                            {(contacts && contacts.length !== 0) ? <Contacts contacts={contacts} removeContact={removeContact} /> : (
+                            {(contacts && contacts.length !== 0) ? (
+                                <Contacts
+                                    contacts={contacts}
+                                    removeContact={removeContact}
+                                />
+                            ) : (
                                 <>
                                     <Chat style={directMessagesStyles.chatSvg} />
                                     <Text style={directMessagesStyles.intro}>
@@ -140,113 +157,10 @@ const HomeScreen = ({
     }
 }
 
-const Channels = ({
-    channels,
-    removeChannel
-}) => {
-    return (
-        <View style={loopsStyles.channelList}>
-            {channels.map(channel => (
-                <ChannelItem key={channel.id} channel={channel} deleteItem={removeChannel} />
-            ))}
-        </View>
-    )
-}
-
-const ChannelItem = ({
-    channel,
-    deleteItem
-}) => {
-    const rightSwipe = (progress, dragX) => {
-        const scale = dragX.interpolate({
-            inputRange: [0, 0.1],
-            outputRange: [1, 0],
-            extrapolate: 'clamp'
-        })
-        return (
-            <TouchableOpacity style={loopsStyles.deleteBox} onPress={() => deleteItem(channel.id)}>
-                <Animated.Text style={{
-                    transform: [{scale: scale}],
-                    fontFamily: 'Roboto_400Regular',
-                    color: '#fff',
-                    fontSize: 14
-                }}>Delete</Animated.Text>
-            </TouchableOpacity>
-        )
-    }
-
-    return (
-        <Swipeable renderRightActions={rightSwipe}>
-            <View style={loopsStyles.channelItem}>
-                <Text style={loopsStyles.channelTitle}># {channel.title}</Text>
-                {channel.hasNewMsg ? <NewMsgAlert /> : null}
-            </View>
-        </Swipeable>
-    )
-}
-
-const Contacts = ({
-    contacts,
-    removeContact
-}) => {
-    return (
-        <View style={directMessagesStyles.contactList}>
-            {contacts.map(contact => (
-                <ContactItem key={contact.id} contact={contact} deleteItem={removeContact}  />
-            ))}
-        </View>
-    )
-}
-
-const ContactItem = ({
-    contact,
-    deleteItem
-}) => {
-    const rightSwipe = (progress, dragX) => {
-        const scale = dragX.interpolate({
-            inputRange: [0, 0.1],
-            outputRange: [1, 0],
-            extrapolate: 'clamp'
-        })
-        return (
-            <TouchableOpacity style={directMessagesStyles.deleteBox} onPress={() => deleteItem(contact.id)}>
-                <Animated.Text style={{
-                    transform: [{scale: scale}],
-                    fontFamily: 'Roboto_400Regular',
-                    color: '#fff',
-                    fontSize: 14
-                }}>Delete</Animated.Text>
-            </TouchableOpacity>
-        )
-    }
-
-    return (
-        <Swipeable renderRightActions={rightSwipe}>
-            <View style={directMessagesStyles.contactItem}>
-                <View style={directMessagesStyles.photoNameContainer}>
-                    <Image
-                        source={contact.photoUrl}
-                        style={contact.onLine ? directMessagesStyles.avatarOnline : directMessagesStyles.avatar}
-                    />
-                    <View style={directMessagesStyles.textContainer}>
-                        <Text style={directMessagesStyles.name}>{contact.firstName} {contact.lastName}</Text>
-                        <Text style={directMessagesStyles.lastMsg}>{(contact.lastMsg.length < 28) ? contact.lastMsg : contact.lastMsg.substring(0, 27) + '...'}</Text>
-                    </View>
-                </View>
-
-                <View style={directMessagesStyles.timeAlertContainer}>
-                    {contact.readMsg ? null : <NewMsgAlert />}
-                    <Text style={directMessagesStyles.lastMsg}>{contact.msgTime}</Text>
-                </View>
-            </View>
-        </Swipeable>
-    )
-}
-
 const styles = StyleSheet.create({
     root: {
-        // flex: 1,
         backgroundColor: '#6ac2bd',
+        height: '100%'
     },
     plusButton: {
         backgroundColor: '#fff',
@@ -339,27 +253,6 @@ const loopsStyles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 25
     },
-    channelList: {
-        width: wp('100%'),
-    },
-    channelItem: {
-        flexDirection: 'row',
-        marginHorizontal: 30,
-        height: 45,
-        alignItems: 'center',
-        justifyContent: 'space-between'
-    },
-    channelTitle: {
-        fontFamily: 'Roboto_400Regular',
-        fontSize: 16,
-        color: '#fff',
-    },
-    deleteBox: {
-        backgroundColor: '#ed4956',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 75
-    },
 })
 
 const directMessagesStyles = StyleSheet.create({
@@ -393,57 +286,6 @@ const directMessagesStyles = StyleSheet.create({
         fontSize: 16,
         color: '#222',
         textAlign: 'center'
-    },
-    contactList: {
-        width: wp('100%'),
-    },
-    contactItem: {
-        flexDirection: 'row',
-        height: 95,
-        marginHorizontal: 30,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        borderBottomWidth: 1,
-        borderBottomColor: '#f5f5f5'
-    },
-    photoNameContainer: {
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    timeAlertContainer: {
-        alignItems: 'flex-end'
-    },
-    avatar: {
-        width: 55,
-        height: 55,
-        borderRadius: 55,
-    },
-    avatarOnline: {
-        width: 55,
-        height: 55,
-        borderRadius: 55,
-        borderColor: '#43cb6f',
-        borderWidth: 2
-    },
-    textContainer: {
-        marginLeft: 10
-    },
-    name: {
-        fontFamily: 'Roboto_400Regular',
-        fontSize: 16,
-        color: '#222',
-    },
-    lastMsg: {
-        marginTop: 4,
-        fontFamily: 'Roboto_400Regular',
-        fontSize: 14,
-        color: '#999'
-    },
-    deleteBox: {
-        backgroundColor: '#ed4956',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 75
     },
 })
 

@@ -9,8 +9,6 @@ import {
     TouchableOpacity,
     Text,
     TextInput,
-    ScrollView,
-    Image,
     KeyboardAvoidingView
 } from 'react-native'
 
@@ -21,8 +19,7 @@ import {
 } from '@expo-google-fonts/roboto'
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen'
 
-import CheckOff from '../../assets/images/check_off.svg'
-import CheckOn from '../../assets/images/check_on.svg'
+import Contacts from './Contacts'
 
 const testingData = [
     {id: '1', firstName: 'Susan', lastName: 'Mitchell', position: 'Founder and CEO', photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg'), onLine: true},
@@ -61,6 +58,10 @@ const NewMessageScreen = ({
         }
     }
 
+    const goToHome = () => navigation.navigate('Home')
+
+    const goToDMChat = () => navigation.navigate('DMChat')
+
     useEffect(() => {
         setContactList(testingData)
     }, [])
@@ -70,75 +71,74 @@ const NewMessageScreen = ({
         // return <AppLoading />
     } else {
         return (
-            <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={styles.root}>
-                <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-
-                <View style={headerStyles.container}>
-                    <View style={headerStyles.header}>
-                        <TouchableOpacity style={headerStyles.leftButton} onPress={() => navigation.navigate('Home')}>
-                            <Text style={headerStyles.letfButtonText}>Cancel</Text>
-                        </TouchableOpacity>
-                        <Text style={headerStyles.heading}>New messages</Text>
-                        <TouchableOpacity style={headerStyles.rightButton}onPress={() => navigation.navigate('DMChat')}>
-                            <Text style={headerStyles.rightButtonText}>Send</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={headerStyles.searchBoxContainer}>
-                        <Text style={headerStyles.searchHeading}>Send to members</Text>
-                        <TextInput
-                            placeholder="Search by name"
-                            placeholderTextColor="#979797"
-                            style={headerStyles.searchBox}
-                            onChangeText={filterContacts}
-                        />
-                    </View>
-                </View>
-
-                <View style={contactListStyles.container}>
-                    <Text style={contactListStyles.heading}>Recent conversations</Text>
-                    <View style={contactListStyles.listContainer}>
-                        <ContactList contacts={contactList} selectContact={selectContact} selectedIds={selectedIds} />
-                    </View>
-                </View>
+            <KeyboardAvoidingView
+                behavior={Platform.OS == "ios" ? "padding" : "height"}
+                style={styles.root}
+            >
+                <StatusBar
+                    barStyle="dark-content"
+                    backgroundColor="#fff"
+                />
+                <Header
+                    filterContacts={filterContacts}
+                    leftBtnAction={goToHome}
+                    rightBtnAction={goToDMChat}
+                />
+                <ContactList
+                    contactList={contactList}
+                    selectContact={selectContact}
+                    selectedIds={selectedIds}
+                />
             </KeyboardAvoidingView>
         )
     }
 }
 
+const Header = ({
+    leftBtnAction,
+    rightBtnAction,
+    filterContacts
+}) => {
+    return (
+        <View style={headerStyles.container}>
+            <View style={headerStyles.header}>
+                <TouchableOpacity style={headerStyles.leftButton} onPress={leftBtnAction}>
+                    <Text style={headerStyles.letfButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <Text style={headerStyles.heading}>New messages</Text>
+                <TouchableOpacity style={headerStyles.rightButton} onPress={rightBtnAction}>
+                    <Text style={headerStyles.rightButtonText}>Send</Text>
+                </TouchableOpacity>
+            </View>
+            <View style={headerStyles.searchBoxContainer}>
+                <Text style={headerStyles.searchHeading}>Send to members</Text>
+                <TextInput
+                    placeholder="Search by name"
+                    placeholderTextColor="#979797"
+                    style={headerStyles.searchBox}
+                    onChangeText={filterContacts}
+                />
+            </View>
+        </View>
+    )
+}
+
 const ContactList = ({
-    contacts,
+    contactList,
     selectContact,
     selectedIds
 }) => {
     return (
-        <ScrollView style={contactListStyles.list}>
-            {contacts && contacts.map(contact => (
-                <ContactItem key={contact.id} contact={contact} selectItem={selectContact} selected={selectedIds.includes(contact.id)} />
-            ))}
-        </ScrollView>
-    )
-}
-
-const ContactItem = ({
-    contact,
-    selectItem,
-    selected
-}) => {
-    return (
-        <View style={contactListStyles.contactItem}>
-            <View style={contactListStyles.photoNameContainer}>
-                <Image
-                    source={contact.photoUrl}
-                    style={contact.onLine ? contactListStyles.avatarOnline : contactListStyles.avatar}
+        <View style={contactListStyles.container}>
+            <Text style={contactListStyles.heading}>
+                Recent conversations
+            </Text>
+            <View style={contactListStyles.listContainer}>
+                <Contacts
+                    contacts={contactList}
+                    selectContact={selectContact}
+                    selectedIds={selectedIds}
                 />
-                <View style={contactListStyles.textContainer}>
-                    <Text style={contactListStyles.name}>{contact.firstName} {contact.lastName}</Text>
-                    <Text style={contactListStyles.position}>{contact.position}</Text>
-                </View>
-            </View>
-
-            <View style={contactListStyles.checkBoxContainer}>
-                {selected ? <CheckOn onPress={() => selectItem(contact.id)} /> : <CheckOff onPress={() => selectItem(contact.id)} />}
             </View>
         </View>
     )
@@ -234,50 +234,6 @@ const contactListStyles = StyleSheet.create({
     },
     listContainer: {
         flex: 1,
-    },
-    list: {
-        paddingHorizontal: 30
-    },
-    contactItem: {
-        flexDirection: 'row',
-        height: 95,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        borderTopWidth: 1,
-        borderTopColor: '#f5f5f5'
-    },
-    photoNameContainer: {
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    checkBoxContainer: {
-        alignItems: 'center'
-    },
-    avatar: {
-        width: 55,
-        height: 55,
-        borderRadius: 55,
-    },
-    avatarOnline: {
-        width: 55,
-        height: 55,
-        borderRadius: 55,
-        borderColor: '#43cb6f',
-        borderWidth: 2
-    },
-    textContainer: {
-        marginLeft: 10
-    },
-    name: {
-        fontFamily: 'Roboto_400Regular',
-        fontSize: 16,
-        color: '#222',
-    },
-    position: {
-        marginTop: 4,
-        fontFamily: 'Roboto_400Regular',
-        fontSize: 14,
-        color: '#999'
     },
 })
 
