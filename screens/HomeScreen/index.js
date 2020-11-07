@@ -35,10 +35,10 @@ const testingDataLoops = [
     {id: '4', title: 'sds_thepowerofwe2', hasNewMsg: false},
 ]
 const testingDataDM = [
-    {id: '1', firstName: 'Susan', lastName: 'Mitchell', lastMsg: 'Yes, I think so.', msgTime: 'Fri', onLine: true, readMsg: true, photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg')},
-    {id: '2', firstName: 'Susan', lastName: 'Mitchell', lastMsg: 'This is great. What I would love to do that.', msgTime: '11:19', onLine: false, readMsg: false, photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg')},
-    {id: '3', firstName: 'Susan', lastName: 'Mitchell', lastMsg: 'Yes, I think so.', msgTime: 'Wed', onLine: false, readMsg: false, photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg')},
-    {id: '4', firstName: 'Susan', lastName: 'Mitchell', lastMsg: 'Yes, I think so.', msgTime: '11:19', onLine: false, readMsg: true, photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg')},
+    {id: '1', firstName: 'Susan', lastName: 'Mitchell', lastMsg: 'Yes, I think so.', msgTime: 'Fri', onLine: false, readMsg: true, photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg')},
+    {id: '2', firstName: 'Amber', lastName: 'Alexander', lastMsg: 'This is great. What I would love to do that.', msgTime: '11:19', onLine: false, readMsg: false, photoUrl: require('../../assets/images/avatar/azamat-zhanisov-a5sRFieA3BY-unsplash.jpg')},
+    {id: '3', firstName: 'Hope', lastName: 'Morison', lastMsg: 'How is it going?', msgTime: 'Wed', onLine: true, readMsg: true, photoUrl: require('../../assets/images/avatar/carlos-vaz-KP4bxnxAilU-unsplash.jpg')},
+    {id: '4', firstName: 'Susan', lastName: 'Mitchell', lastMsg: `What's up?`, msgTime: '11:19', onLine: true, readMsg: true, photoUrl: require('../../assets/images/avatar/daniil-lobachev-jn-nsWeYOrY-unsplash.jpg')},
 ]
 
 const HomeScreen = ({
