@@ -9,8 +9,6 @@ import {
     TouchableOpacity,
     Text,
     TextInput,
-    ScrollView,
-    Image,
     KeyboardAvoidingView
 } from 'react-native'
 
@@ -21,17 +19,16 @@ import {
 } from '@expo-google-fonts/roboto'
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen'
 
-import CheckOff from '../../assets/images/check_off.svg'
-import CheckOn from '../../assets/images/check_on.svg'
+import Contacts from './Contacts'
 
 const testingData = [
     {id: '1', firstName: 'Susan', lastName: 'Mitchell', position: 'Founder and CEO', photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg'), onLine: true},
-    {id: '2', firstName: 'Ryan', lastName: 'Edmonson', position: 'Interaction Designer', photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg'), onLine: true},
-    {id: '3', firstName: 'Amber', lastName: 'Alexander', position: 'Project Manager', photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg'), onLine: true},
-    {id: '4', firstName: 'Susan', lastName: 'Mitchell', position: 'Founder and CEO', photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg'), onLine: true},
-    {id: '5', firstName: 'Susan', lastName: 'Mitchell', position: 'Founder and CEO', photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg'), onLine: true},
-    {id: '6', firstName: 'Susan', lastName: 'Mitchell', position: 'Founder and CEO', photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg'), onLine: true},
-    {id: '7', firstName: 'Susan', lastName: 'Mitchell', position: 'Founder and CEO', photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg'), onLine: true},
+    {id: '2', firstName: 'Ryan', lastName: 'Edmonson', position: 'Interaction Designer', photoUrl: require('../../assets/images/avatar/azamat-zhanisov-a5sRFieA3BY-unsplash.jpg'), onLine: false},
+    {id: '3', firstName: 'Amber', lastName: 'Alexander', position: 'Project Manager', photoUrl: require('../../assets/images/avatar/carlos-vaz-KP4bxnxAilU-unsplash.jpg'), onLine: false},
+    {id: '4', firstName: 'Daniel', lastName: 'Raddson', position: 'Brand Manager', photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg'), onLine: false},
+    {id: '5', firstName: 'Susan', lastName: 'Mitchell', position: 'Founder and CEO', photoUrl: require('../../assets/images/avatar/daniil-lobachev-jn-nsWeYOrY-unsplash.jpg'), onLine: false},
+    {id: '6', firstName: 'Susan', lastName: 'Mitchell', position: 'Project Manager', photoUrl: require('../../assets/images/avatar/alexandru-zdrobau--djRG1vB1pw-unsplash.jpg'), onLine: false},
+    {id: '7', firstName: 'Susan', lastName: 'Mitchell', position: 'Marketing Director', photoUrl: require('../../assets/images/avatar/carlos-vaz-KP4bxnxAilU-unsplash.jpg'), onLine: true},
 ]
 
 const NewLoopScreen = ({
@@ -86,6 +83,9 @@ const NewLoopScreen = ({
                     </View>
                     <View style={headerStyles.searchBoxContainer}>
                         <Text style={headerStyles.searchHeading}>Make Public</Text>
+                        <View style={[headerStyles.searchBox, { justifyContent: 'center' }]}>
+                            <Text style={{ alignSelf: 'flex-start' }}>Anyone can join this loop</Text>
+                        </View>
                     </View>
                     <View style={headerStyles.searchBoxContainer}>
                         <Text style={headerStyles.searchHeading}>Name (lowercase, no spaces or periods)</Text>
@@ -111,51 +111,12 @@ const NewLoopScreen = ({
 
                 <View style={contactListStyles.container}>
                     <View style={contactListStyles.listContainer}>
-                        <ContactList contacts={contactList} selectContact={selectContact} selectedIds={selectedIds} />
+                        <Contacts contacts={contactList} selectContact={selectContact} selectedIds={selectedIds} />
                     </View>
                 </View>
             </KeyboardAvoidingView>
         )
     }
-}
-
-const ContactList = ({
-    contacts,
-    selectContact,
-    selectedIds
-}) => {
-    return (
-        <ScrollView style={contactListStyles.list}>
-            {contacts && contacts.map(contact => (
-                <ContactItem key={contact.id} contact={contact} selectItem={selectContact} selected={selectedIds.includes(contact.id)} />
-            ))}
-        </ScrollView>
-    )
-}
-
-const ContactItem = ({
-    contact,
-    selectItem,
-    selected
-}) => {
-    return (
-        <View style={contactListStyles.contactItem}>
-            <View style={contactListStyles.photoNameContainer}>
-                <Image
-                    source={contact.photoUrl}
-                    style={contact.onLine ? contactListStyles.avatarOnline : contactListStyles.avatar}
-                />
-                <View style={contactListStyles.textContainer}>
-                    <Text style={contactListStyles.name}>{contact.firstName} {contact.lastName}</Text>
-                    <Text style={contactListStyles.position}>{contact.position}</Text>
-                </View>
-            </View>
-
-            <View style={contactListStyles.checkBoxContainer}>
-                {selected ? <CheckOn onPress={() => selectItem(contact.id)} /> : <CheckOff onPress={() => selectItem(contact.id)} />}
-            </View>
-        </View>
-    )
 }
 
 const styles = StyleSheet.create({
@@ -249,50 +210,6 @@ const contactListStyles = StyleSheet.create({
     },
     listContainer: {
         flex: 1,
-    },
-    list: {
-        paddingHorizontal: 30
-    },
-    contactItem: {
-        flexDirection: 'row',
-        height: 95,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        borderTopWidth: 1,
-        borderTopColor: '#f5f5f5'
-    },
-    photoNameContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    checkBoxContainer: {
-        alignItems: 'center'
-    },
-    avatar: {
-        width: 55,
-        height: 55,
-        borderRadius: 55,
-    },
-    avatarOnline: {
-        width: 55,
-        height: 55,
-        borderRadius: 55,
-        borderColor: '#43cb6f',
-        borderWidth: 2
-    },
-    textContainer: {
-        marginLeft: 10
-    },
-    name: {
-        fontFamily: 'Roboto_400Regular',
-        fontSize: 16,
-        color: '#222',
-    },
-    position: {
-        marginTop: 4,
-        fontFamily: 'Roboto_400Regular',
-        fontSize: 14,
-        color: '#999'
     },
 })
 
