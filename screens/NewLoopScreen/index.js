@@ -19,6 +19,9 @@ import {
 } from '@expo-google-fonts/roboto'
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen'
 
+import ToggleSwitchOn from '../../assets/images/toggle-switch-on.svg'
+import ToggleSwitchOff from '../../assets/images/toggle-switch-off.svg'
+
 import Contacts from './Contacts'
 
 const testingData = [
@@ -42,6 +45,7 @@ const NewLoopScreen = ({
     const [contactList, setContactList] = useState([])
     const [selectedIds, setSelectedIds] = useState([])
     const [name, setName] = useState('')
+    const [loopPublic, setLoopPublic] = useState(true)
 
     const selectContact = id => {
         if (!selectedIds.includes(id)) {
@@ -83,8 +87,11 @@ const NewLoopScreen = ({
                     </View>
                     <View style={headerStyles.searchBoxContainer}>
                         <Text style={headerStyles.searchHeading}>Make Public</Text>
-                        <View style={[headerStyles.searchBox, { justifyContent: 'center' }]}>
-                            <Text style={{ alignSelf: 'flex-start' }}>Anyone can join this loop</Text>
+                        <View style={[headerStyles.searchBox, headerStyles.publicBox]}>
+                            <Text>Anyone can join this loop</Text>
+                            <View>
+                                {loopPublic ? <ToggleSwitchOn onPress={() => setLoopPublic(false)} /> : <ToggleSwitchOff onPress={() => setLoopPublic(true)} />}
+                            </View>
                         </View>
                     </View>
                     <View style={headerStyles.searchBoxContainer}>
@@ -182,6 +189,11 @@ const headerStyles = StyleSheet.create({
         fontFamily: 'Roboto_500Medium',
         fontSize: 14,
         color: '#222',
+    },
+    publicBox: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
     },
     searchBox: {
         marginVertical: 10,
