@@ -48,7 +48,7 @@ const DMChatScreen = ({ navigation }) => {
 
     const [messages, setMessages] = useState([])
 
-    const goToNewLoop = () => navigation.navigate('NewLoop')
+    const goToNewMessage = () => navigation.navigate('NewMessage')
 
     const addNewMessage = message => {
         setMessages([...messages, {
@@ -81,7 +81,7 @@ const DMChatScreen = ({ navigation }) => {
                 <View style={styles.bottom}>
                     <MessageInputBox
                         userData={testingData}
-                        btnAction={goToNewLoop}
+                        btnAction={goToNewMessage}
                         addNewMessage={addNewMessage}
                     />
                 </View>

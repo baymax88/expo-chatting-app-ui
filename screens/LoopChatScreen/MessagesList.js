@@ -7,7 +7,8 @@ import {
     View,
     StyleSheet,
     Text,
-    Keyboard
+    Keyboard,
+    Image
 } from 'react-native'
 import {
     useFonts,
@@ -53,20 +54,43 @@ const MessagesList = ({
 
 const Message = ({ message }) => {
     return (
-        <View style={[styles.messageBox, message.from === '2' ? {backgroundColor: '#f4f4f4', alignSelf: 'flex-end'} : {backgroundColor: '#6ac2bd', alignSelf: 'flex-start'}]}>
-            <Text style={message.from === '2' ? styles.myMessageText : styles.messageText}>{message.content}</Text>
+        <View style={[styles.messageContainer, message.from === '2' ? {alignSelf: 'flex-end'} : {alignSelf: 'flex-start'}]}>
+            {message.from !== '2' ? (
+                <Image
+                    source={message.photoUrl}
+                    style={[styles.avatar, message.online ? styles.online : null]}
+                />
+            ) : null}
+            <View style={[styles.messageBox, message.from === '2' ? {backgroundColor: '#f4f4f4', alignSelf: 'flex-end'} : {backgroundColor: '#6ac2bd', alignSelf: 'flex-start'}]}>
+                <Text style={message.from === '2' ? styles.myMessageText : styles.messageText}>{message.content}</Text>
+            </View>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    messageBox: {
+    messageContainer: {
         flex: 1,
+        maxWidth: '90%',
+        marginTop: 5,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start'
+    },
+    avatar: {
+        width: 25,
+        height: 25,
+        borderRadius: 25,
+        marginRight: 10
+    },
+    online: {
+        borderColor: '#43cb6f',
+        borderWidth: 2
+    },
+    messageBox: {
         paddingHorizontal: 20,
         paddingVertical: 15,
-        maxWidth: '80%',
         borderRadius: 22,
-        marginTop: 5
     },
     messageText: {
         fontFamily: 'Roboto_400Regular',
