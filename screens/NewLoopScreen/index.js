@@ -81,7 +81,7 @@ const NewLoopScreen = ({
                             <Text style={headerStyles.letfButtonText}>Cancel</Text>
                         </TouchableOpacity>
                         <Text style={headerStyles.heading}>New loop</Text>
-                        <TouchableOpacity style={headerStyles.rightButton}onPress={() => navigation.navigate('DMChat')}>
+                        <TouchableOpacity style={headerStyles.rightButton}onPress={() => navigation.navigate('LoopChat')}>
                             <Text style={headerStyles.rightButtonText}>Share</Text>
                         </TouchableOpacity>
                     </View>
